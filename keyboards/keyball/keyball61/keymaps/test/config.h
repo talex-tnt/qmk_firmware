@@ -22,4 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGBLIGHT_ENABLE
 #    define RGBLIGHT_EFFECT_RGB_TEST  // required for LED test
+#    undef RGBLIGHT_DEFAULT_MODE
+#    define RGBLIGHT_DEFAULT_MODE RGBLIGHT_MODE_RGB_TEST
 #endif
