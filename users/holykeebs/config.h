@@ -135,6 +135,10 @@
 #endif
 
 #ifdef HK_OLED_ENABLE
+#    undef OLED_FONT_H
+#    undef OLED_FONT_START
+#    undef OLED_FONT_END
+
 #    define OLED_FONT_H "users/holykeebs/logofont/logofont.c"
 #    define OLED_FONT_START 32
 #    define OLED_FONT_END 195

@@ -64,11 +64,11 @@ __attribute__((weak)) void keyball_on_adjust_layout(keyball_adjust_t v) {}
 
 // divmod16 divides *v by div, returns the quotient, and assigns the remainder
 // to *v.
-static mouse_xy_report_t divmod16(mouse_xy_report_t *v, int16_t div) {
-    mouse_xy_report_t r = *v / div;
-    *v -= r * div;
-    return r;
-}
+// static mouse_xy_report_t divmod16(mouse_xy_report_t *v, int16_t div) {
+//     mouse_xy_report_t r = *v / div;
+//     *v -= r * div;
+//     return r;
+// }
 
 // clip2int8 clips an integer fit into int8_t.
 static inline int8_t clip2int8(int16_t v) {
@@ -159,8 +159,13 @@ __attribute__((weak)) void keyball_on_apply_motion_to_mouse_move(report_mouse_t 
 __attribute__((weak)) void keyball_on_apply_motion_to_mouse_scroll(report_mouse_t *report, report_mouse_t *output, bool is_left) {
     // consume motion of trackball.
     int16_t div = 1 << (keyball_get_scroll_div() - 1);
-    int16_t x = divmod16(&report->x, div);
-    int16_t y = divmod16(&report->y, div);
+    // int16_t x = divmod16(&report->x, div);
+    // int16_t y = divmod16(&report->y, div);
+    int16_t x = report->x / div;
+    int16_t y = report->y / div;
+    report->x -= x * div;
+    report->y -= y * div;
+
 
     // apply to mouse report.
 #if KEYBALL_MODEL == 61 || KEYBALL_MODEL == 39 || KEYBALL_MODEL == 147 || KEYBALL_MODEL == 44
