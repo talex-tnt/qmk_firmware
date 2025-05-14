@@ -75,12 +75,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-layer_state_t layer_state_set_user(layer_state_t state) {
-    // Auto enable scroll mode when the highest layer is MAC_MOD_LAYER
-    keyball_set_scroll_mode(get_highest_layer(state) == L_MAC_MOD);
-    return state;
-}
-
 #ifdef OLED_ENABLE
 
 #    include "lib/oledkit/oledkit.h"
@@ -93,6 +87,8 @@ void oledkit_render_info_user(void) {
 #endif
 
 
+bool gui_tab_active = false;
+bool ctrl_tab_active = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
@@ -100,20 +96,50 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			if (record->event.pressed) {
 				register_mods(MOD_BIT(KC_LGUI));
 				register_code(KC_TAB);
+                gui_tab_active = true;
 			} else {
 				unregister_code(KC_TAB);
-				unregister_mods(MOD_BIT(KC_LGUI));
 			}
 			return false; // skip default processing
         case CTRL_TAB:
 			if (record->event.pressed) {
 				register_mods(MOD_BIT(KC_LCTL));
 				register_code(KC_TAB);
+                ctrl_tab_active = true;
 			} else {
 				unregister_code(KC_TAB);
-				unregister_mods(MOD_BIT(KC_LCTL));
 			}
 			return false; // Skip further processing
 	}
 	return true;
+}
+
+layer_state_t previous_layer_state;
+
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+
+    keyball_set_scroll_mode(get_highest_layer(state) == L_MAC_MOD);  // Auto enable scroll mode when the highest layer is MAC_MOD_LAYER
+
+	if (gui_tab_active || ctrl_tab_active) {
+		for (uint8_t i = 0; i < 32; i++) {
+			bool was_active = (previous_layer_state & (1UL << i)) != 0;
+			bool is_active = (state & (1UL << i)) != 0;
+
+			if (was_active && !is_active) {
+				if (gui_tab_active) {
+					unregister_mods(MOD_BIT(KC_LGUI));
+					gui_tab_active = false;
+				}
+				if (ctrl_tab_active) {
+					unregister_mods(MOD_BIT(KC_LCTL));
+					ctrl_tab_active = false;
+				}
+				break;
+			}
+		}
+	}
+
+	previous_layer_state = state;
+	return state;
 }
