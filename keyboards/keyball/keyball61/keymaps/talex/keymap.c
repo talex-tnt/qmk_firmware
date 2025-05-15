@@ -49,7 +49,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [L_MAC_MOD] = LAYOUT_universal(
-    KC_GRAVE , _______  , _______           , _______       , _______     , _______                                                             , _______  , _______  , _______  , _______  , _______  , KC_DEL  ,
+    KC_GRAVE , _______  , _______           , _______       , _______     , _______                                                             , _______  , _______  , _______  , KC_MINUS , KC_EQUAL , KC_DEL  ,
     _______  , _______  , _______           , CTRL_TAB      , _______     , _______                                                             , KC_PGUP  , KC_HOME  , KC_UP    , KC_END   , KC_LBRC  , KC_RBRC ,
     _______  , KC_CAPS  , G(S(KC_QUOT))     , GUI_TAB       , G(KC_QUOT)  , _______                                                             , KC_PGDN  , KC_LEFT  , KC_DOWN  , KC_RGHT  , KC_BSPC  , KC_ENT ,
     _______  , _______  , _______           , _______       , _______     , KC_BTN3           , KC_BTN2                 , _______               , _______  , _______  , _______  , _______  , _______  , _______ ,
@@ -67,9 +67,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [L_KEYBALL] = LAYOUT_universal(
     RGB_TOG  , AML_TO   , AML_I50           , AML_D50        , _______     , _______                                                            , RGB_M_P  , RGB_M_B  , RGB_M_R  , RGB_M_SW , RGB_M_SN , RGB_M_K ,
     RGB_MOD  , RGB_HUI  , RGB_SAI           , RGB_VAI        , _______     , _______                                                            , RGB_M_X  , RGB_M_G  , RGB_M_T  , RGB_M_TW , _______  , _______ ,
-    RGB_RMOD , RGB_HUD  , RGB_SAD           , RGB_VAD        , _______     , _______                                                            , CPI_D1K  , CPI_D100 , CPI_I100 , CPI_I1K  , KBC_SAVE , KBC_RST ,
-    _______  , _______  , SCRL_DVD          , SCRL_DVI       , SCRL_MO     , SCRL_TO           , EE_CLR                  , _______              , KC_HOME  , KC_PGDN  , KC_PGUP  , KC_END   , _______  , _______ ,
-    QK_BOOT  , _______  , _______           , _______        , _______     , _______           , _______                 , _______              , KC_BSPC  , _______  , _______  , _______  , _______  , QK_BOOT
+    RGB_RMOD , RGB_HUD  , RGB_SAD           , RGB_VAD        , _______     , _______                                                            , CPI_D1K  , CPI_D100 , CPI_I100 , CPI_I1K  , _______  , _______ ,
+    _______  , _______  , SCRL_DVD          , SCRL_DVI       , SCRL_MO     , SCRL_TO           , _______                 , _______              , _______  , _______  , _______  , _______  , KBC_SAVE , KBC_RST ,
+    _______  , _______  , _______           , _______        , _______     , _______           , _______                 , _______              , _______  , _______  , _______  , _______  , EE_CLR   , QK_BOOT
   )
 
 };
@@ -87,10 +87,43 @@ void oledkit_render_info_user(void) {
 #endif
 
 
+// https://docs.qmk.fm/feature_advanced_keycodes
+bool swap_alt_gui(uint16_t keycode, keyrecord_t *record) {
+    uint8_t mod_state = get_mods();
+	switch (keycode) {
+        case KC_DEL:
+        case KC_BSPC:
+		case KC_LEFT:
+		case KC_RIGHT:
+		case KC_UP:
+		case KC_DOWN: {
+			if (record->event.pressed) {
+				if (mod_state & MOD_MASK_ALT) {
+                    del_mods(MOD_MASK_ALT);
+                    add_mods(MOD_MASK_GUI);
+					register_code(keycode);
+                    set_mods(mod_state);
+				} else if (mod_state & MOD_MASK_GUI) {
+                    del_mods(MOD_MASK_GUI);
+                    add_mods(MOD_MASK_ALT);
+					register_code(A(keycode));
+                    set_mods(mod_state);
+				} else {
+					register_code(keycode);
+				}
+			} else {
+				unregister_code(keycode);
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+
 bool gui_tab_active = false;
 bool ctrl_tab_active = false;
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+bool handle_alt_gui_tab(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
 		case GUI_TAB:
 			if (record->event.pressed) {
@@ -109,9 +142,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			} else {
 				unregister_code(KC_TAB);
 			}
-			return false; // Skip further processing
+			return false;
 	}
 	return true;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if(layer_state_is(L_MAC_MOD) && !swap_alt_gui(keycode, record)) {
+        return false;
+    }
+     if(!handle_alt_gui_tab(keycode, record)) {
+        return false;
+    }
+    return true;
 }
 
 layer_state_t previous_layer_state;
