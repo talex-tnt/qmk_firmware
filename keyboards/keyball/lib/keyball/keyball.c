@@ -156,7 +156,66 @@ __attribute__((weak)) void keyball_on_apply_motion_to_mouse_move(report_mouse_t 
 
 }
 
+
+static float scroll_accumulator_h = 0;
+static float scroll_accumulator_v = 0;
+
+void apply_scroll(int16_t raw_x, int16_t raw_y, report_mouse_t *output) {
+    float sensitivity = ((float)keyball_get_scroll_div()) / 250.f;
+    scroll_accumulator_h += raw_x * sensitivity;
+    scroll_accumulator_v += raw_y * sensitivity;
+
+    int8_t scroll_h = 0;
+    int8_t scroll_v = 0;
+
+    // emetti solo la parte intera dello scroll
+    if (scroll_accumulator_h >= 1.0f) {
+        scroll_h = (int8_t)scroll_accumulator_h;
+        scroll_accumulator_h -= scroll_h;
+    } else if (scroll_accumulator_h <= -1.0f) {
+        scroll_h = (int8_t)scroll_accumulator_h;
+        scroll_accumulator_h -= scroll_h;
+    }
+
+    if (scroll_accumulator_v >= 1.0f) {
+        scroll_v = (int8_t)scroll_accumulator_v;
+        scroll_accumulator_v -= scroll_v;
+    } else if (scroll_accumulator_v <= -1.0f) {
+        scroll_v = (int8_t)scroll_accumulator_v;
+        scroll_accumulator_v -= scroll_v;
+    }
+
+    output->h = scroll_h;
+    output->v = scroll_v;
+}
+
 __attribute__((weak)) void keyball_on_apply_motion_to_mouse_scroll(report_mouse_t *report, report_mouse_t *output, bool is_left) {
+
+#if KEYBALL_MODEL == 61 || KEYBALL_MODEL == 39 || KEYBALL_MODEL == 147 || KEYBALL_MODEL == 44
+    apply_scroll(-report->x, -report->y, output);
+    if (is_left) {
+        output->h = -output->h;
+        output->v = -output->v;
+    }
+#else
+#    error("unknown Keyball model")
+#endif
+
+    switch (keyball_get_scrollsnap_mode()) {
+        case KEYBALL_SCROLLSNAP_MODE_VERTICAL:
+            output->h = 0;
+            break;
+        case KEYBALL_SCROLLSNAP_MODE_HORIZONTAL:
+            output->v = 0;
+            break;
+        default:
+            // pass by without doing anything
+            break;
+    }
+}
+
+
+__attribute__((weak)) void OLD_keyball_on_apply_motion_to_mouse_scroll(report_mouse_t *report, report_mouse_t *output, bool is_left) {
     // consume motion of trackball.
     int16_t div = 1 << (keyball_get_scroll_div() - 1);
     // int16_t x = divmod16(&report->x, div);
