@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 enum custom_keycodes {
-	GUI_TAB = SAFE_RANGE,
-    CTRL_TAB,
+	GUI_TAB = QK_KB_16,
+    CTRL_TAB = QK_KB_17,
 	// other custom keycodes...
 };
 
