@@ -106,7 +106,34 @@ bool swap_alt_gui(uint16_t keycode, keyrecord_t *record) {
 				} else if (mod_state & MOD_MASK_GUI) {
                     del_mods(MOD_MASK_GUI);
                     add_mods(MOD_MASK_ALT);
-					register_code(A(keycode));
+					register_code(keycode);
+                    set_mods(mod_state);
+				} else {
+					register_code(keycode);
+				}
+			} else {
+				unregister_code(keycode);
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+bool swap_ctrl_gui(uint16_t keycode, keyrecord_t *record) {
+    uint8_t mod_state = get_mods();
+	switch (keycode) {
+		case KC_MINUS: {
+			if (record->event.pressed) {
+				if (mod_state & MOD_MASK_CTRL) {
+                    del_mods(MOD_MASK_CTRL);
+                    add_mods(MOD_MASK_GUI);
+					register_code(keycode);
+                    set_mods(mod_state);
+				} else if (mod_state & MOD_MASK_GUI) {
+                    del_mods(MOD_MASK_GUI);
+                    add_mods(MOD_MASK_CTRL);
+					register_code(keycode);
                     set_mods(mod_state);
 				} else {
 					register_code(keycode);
@@ -151,7 +178,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if(layer_state_is(L_MAC_MOD) && !swap_alt_gui(keycode, record)) {
         return false;
     }
-     if(!handle_alt_gui_tab(keycode, record)) {
+    if(layer_state_is(L_MAC_MOD) && !swap_ctrl_gui(keycode, record)) {
+        return false;
+    }
+    if(!handle_alt_gui_tab(keycode, record)) {
         return false;
     }
     return true;
