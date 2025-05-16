@@ -46,32 +46,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC   , KC_1     , KC_2              , KC_3           , KC_4        , KC_5                                                               , KC_6     , KC_7           , KC_8     , KC_9           , KC_0     , KC_BSPC ,
     KC_TAB   , KC_Q     , KC_W              , KC_E           , KC_R        , KC_T                                                               , KC_Y     , KC_U           , KC_I     , KC_O           , KC_P     , KC_BSLS ,
     KC_DEL   , KC_A     , KC_S              , KC_D           , KC_F        , KC_G                                                               , KC_H     , KC_J           , KC_K     , KC_L           , KC_SCLN  , KC_QUOT  ,
-    KC_LSFT  , KC_Z     , KC_X              , KC_C           , KC_V        , KC_B              , MO(L_FUNC)             , MO(L_KEYBALL)         , KC_N     , KC_M           , KC_COMM  , KC_DOT         , KC_SLSH  , KC_RSFT ,
-    KC_LGUI  , KC_LCTL  , KC_LALT           , _______        , _______     , LT(L_MAC_MOD,KC_BTN1)     , KC_BTN1        , MT(MOD_RCTL, KC_ENT)  , KC_SPC   , _______        , _______  , _______        , KC_RALT  , KC_RGUI
+    KC_LSFT  , KC_Z     , KC_X              , KC_C           , KC_V        , KC_B                   , MO(L_FUNC)        , MO(L_KEYBALL)         , KC_N     , KC_M           , KC_COMM  , KC_DOT         , KC_SLSH  , KC_RSFT ,
+    KC_LGUI  , KC_LCTL  , KC_LALT           , _______        , _______     , LT(L_MAC_MOD,KC_BTN1)  , KC_BTN1           , MT(MOD_RCTL, KC_ENT)  , KC_SPC   , _______        , _______  , _______        , KC_RALT  , KC_RGUI
   ),
 
   [L_MAC_MOD] = LAYOUT_universal(
     KC_GRAVE , _______  , _______           , _______       , _______     , _______                                                             , _______  , _______        , _______  , KC_MINUS       , KC_EQUAL , KC_DEL  ,
     _______  , _______  , _______           , CTRL_TAB      , _______     , _______                                                             , KC_PGUP  , KC_HOME        , KC_UP    , KC_END         , KC_LBRC  , KC_RBRC ,
     _______  , KC_CAPS  , G(S(KC_QUOT))     , GUI_TAB       , G(KC_QUOT)  , _______                                                             , KC_PGDN  , KC_LEFT        , KC_DOWN  , KC_RGHT        , KC_BSPC  , KC_ENT ,
-    _______  , _______  , _______           , _______       , _______     , KC_BTN3           , KC_BTN2                 , _______               , _______  , S(C(KC_LEFT))  , _______  , S(C(KC_RGHT))  , _______  , _______ ,
-    _______  , _______  , _______           , _______       , _______     , _______           , _______                 , _______               , _______  , _______        , _______  , _______        , _______  , _______
+    _______  , _______  , _______           , _______       , _______     , KC_BTN3                  , KC_BTN2          , _______               , _______  , S(C(KC_LEFT))  , _______  , S(C(KC_RGHT))  , _______  , _______ ,
+    _______  , _______  , _______           , _______       , _______     , _______                  , _______          , _______               , _______  , _______        , _______  , _______        , _______  , _______
   ),
 
   [L_FUNC] = LAYOUT_universal(
     _______  , KC_F1    , KC_F2             , KC_F3         , KC_F4       , KC_F5                                                               , KC_F6    , KC_F7          , KC_F8    , KC_F9          , KC_F10   , _______ ,
     _______  , KC_F11   , KC_F12            , _______       , _______     , _______                                                             , _______  , _______        , _______  , _______        , _______  , _______ ,
     _______  , _______  , _______           , _______       , _______     , _______                                                             , _______  , _______        , _______  , _______        , _______  , _______ ,
-    _______  , _______  , _______           , _______       , _______     , _______           , _______                  , _______              , _______  , _______        , _______  , _______        , _______  , _______ ,
-    _______  , _______  , _______           , _______       , _______     , _______           , _______                  , _______              , _______  , _______        , _______  , _______        , _______  , _______
+    _______  , _______  , _______           , _______       , _______     , _______                  , _______           , _______              , _______  , _______        , _______  , _______        , _______  , _______ ,
+    _______  , _______  , _______           , _______       , _______     , _______                  , _______           , _______              , _______  , _______        , _______  , _______        , _______  , _______
   ),
 
   [L_KEYBALL] = LAYOUT_universal(
     RGB_TOG  , AML_TO   , AML_I50           , AML_D50        , _______     , _______                                                            , RGB_M_P  , RGB_M_B        , RGB_M_R  , RGB_M_SW       , RGB_M_SN , RGB_M_K ,
     RGB_MOD  , RGB_HUI  , RGB_SAI           , RGB_VAI        , _______     , _______                                                            , RGB_M_X  , RGB_M_G        , RGB_M_T  , RGB_M_TW       , _______  , _______ ,
     RGB_RMOD , RGB_HUD  , RGB_SAD           , RGB_VAD        , _______     , _______                                                            , CPI_D1K  , CPI_D100       , CPI_I100 , CPI_I1K        , _______  , _______ ,
-    _______  , _______  , SCRL_DVD          , SCRL_DVI       , SCRL_MO     , SCRL_TO           , _______                 , _______              , _______  , _______        , _______  , _______        , KBC_SAVE , KBC_RST ,
-    _______  , _______  , _______           , _______        , _______     , _______           , _______                 , _______              , _______  , _______        , _______  , _______        , EE_CLR   , QK_BOOT
+    _______  , _______  , SCRL_DVD          , SCRL_DVI       , SCRL_MO     , SCRL_TO                 , _______           , _______              , _______  , _______        , _______  , _______        , KBC_SAVE , KBC_RST ,
+    _______  , _______  , _______           , _______        , _______     , _______                 , _______           , _______              , _______  , _______        , _______  , _______        , EE_CLR   , QK_BOOT
   )
 
 };
