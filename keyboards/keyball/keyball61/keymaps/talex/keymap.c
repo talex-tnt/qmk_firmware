@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PERMISSIVE_HOLD
 #define TAPPING_FORCE_HOLD
 
+
+
 enum custom_keycodes {
 	GUI_TAB = QK_KB_16,
     CTRL_TAB = QK_KB_17,
@@ -38,6 +40,8 @@ enum {
     L_FUNC = 2,
     L_KEYBALL = 3
 };
+
+#define HI_PRECISION_LAYER_KEY MO(L_FUNC)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -176,6 +180,9 @@ bool handle_alt_gui_tab(uint16_t keycode, keyrecord_t *record) {
 	return true;
 }
 
+
+uint16_t prev_cpi_value = KEYBALL_CPI_DEFAULT;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if(!swap_alt_gui(keycode, record)) {
         return false;
@@ -185,6 +192,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     if(!handle_alt_gui_tab(keycode, record)) {
         return false;
+    }
+    switch (keycode) {
+        case HI_PRECISION_LAYER_KEY:
+        if (record->event.pressed) {
+            prev_cpi_value = keyball_get_cpi();
+            keyball_set_cpi(500);
+        } else {
+            keyball_set_cpi(prev_cpi_value);
+        }
+        break;
     }
     return true;
 }
