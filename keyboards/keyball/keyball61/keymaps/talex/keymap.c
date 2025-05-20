@@ -42,6 +42,7 @@ enum {
 };
 
 #define HI_PRECISION_LAYER_KEY MO(L_FUNC)
+#define _EMPTY_ XXXXXXX
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -51,31 +52,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB   , KC_Q     , KC_W              , KC_E           , KC_R        , KC_T                                                              , KC_Y     , KC_U           , KC_I     , KC_O           , KC_P     , KC_BSLS ,
     KC_DEL   , KC_A     , KC_S              , KC_D           , KC_F        , KC_G                                                              , KC_H     , KC_J           , KC_K     , KC_L           , KC_SCLN  , KC_ENT  ,
     KC_LSFT  , KC_Z     , KC_X              , KC_C           , KC_V        , KC_B           , _______                  , MO(L_KEYBALL)         , KC_N     , KC_M           , KC_COMM  , KC_DOT         , KC_SLSH  , KC_RSFT ,
-    KC_LGUI  , KC_LCTL  , KC_LALT           , KC_BTN1        , MO(L_FUNC)  , MO(L_MAC_MOD)  , KC_SPC                   , KC_RCTL              , KC_SPC   , _______        , _______  , _______        , KC_RALT  , KC_RGUI
+    KC_LGUI  , KC_LCTL  , KC_LALT           , KC_BTN1        , MO(L_FUNC)  , MO(L_MAC_MOD)  , KC_SPC                   , KC_RCTL              , KC_SPC   , _EMPTY_        , _EMPTY_  , _EMPTY_        , KC_RALT  , KC_RGUI
   ),
 
   [L_MAC_MOD] = LAYOUT_universal(
-    KC_GRAVE , _______  , _______           , _______       , _______     , _______                                                             , _______  , _______        , _______  , KC_MINUS       , KC_EQUAL , KC_DEL  ,
-    _______  , _______  , _______           , CTRL_TAB      , _______     , _______                                                             , KC_PGUP  , KC_HOME        , KC_UP    , KC_END         , KC_LBRC  , KC_RBRC ,
-    _______  , KC_CAPS  , G(S(KC_QUOT))     , GUI_TAB       , G(KC_QUOT)  , _______                                                             , KC_PGDN  , KC_LEFT        , KC_DOWN  , KC_RGHT        , KC_QUOT  , KC_ENT  ,
-    _______  , _______  , KC_BTN2           , KC_BTN3       , KC_BTN1     , _______                  , _______          , _______               , _______  , S(C(KC_LEFT))  , _______  , S(C(KC_RGHT))  , KC_BSPC  , KC_DEL  ,
-    _______  , _______  , _______           , _______       , _______     , _______                  , _______          , _______               , _______  , _______        , _______  , _______        , _______  , _______
+    KC_GRAVE , _EMPTY_  , _EMPTY_           , _EMPTY_       , _EMPTY_     , _EMPTY_                                                             , _EMPTY_  , _EMPTY_        , _EMPTY_  , KC_MINUS       , KC_EQUAL , KC_DEL  ,
+    _______  , _EMPTY_  , _EMPTY_           , CTRL_TAB      , _EMPTY_     , _EMPTY_                                                             , KC_PGUP  , KC_HOME        , KC_UP    , KC_END         , KC_LBRC  , KC_RBRC ,
+    _______  , KC_CAPS  , G(S(KC_QUOT))     , GUI_TAB       , G(KC_QUOT)  , _EMPTY_                                                             , KC_PGDN  , KC_LEFT        , KC_DOWN  , KC_RGHT        , KC_QUOT  , KC_ENT  ,
+    _______  , _EMPTY_  , KC_BTN2           , KC_BTN3       , KC_BTN1     , _EMPTY_                  , _EMPTY_          , _EMPTY_               , _EMPTY_  , S(C(KC_LEFT))  , _EMPTY_  , S(C(KC_RGHT))  , KC_BSPC  , KC_DEL  ,
+    _______  , _______  , _______           , _EMPTY_       , _EMPTY_     , _______                  , _EMPTY_          , _EMPTY_               , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_        , _______  , _______
   ),
 
   [L_FUNC] = LAYOUT_universal(
     _______  , KC_F1    , KC_F2             , KC_F3         , KC_F4       , KC_F5                                                               , KC_F6    , KC_F7          , KC_F8    , KC_F9          , KC_F10   , _______ ,
-    _______  , KC_F11   , KC_F12            , _______       , _______     , _______                                                             , _______  , _______        , _______  , _______        , _______  , _______ ,
-    _______  , _______  , _______           , _______       , _______     , _______                                                             , _______  , _______        , _______  , _______        , _______  , _______ ,
-    _______  , _______  , KC_BTN2           , KC_BTN3       , KC_BTN1     , _______                  , _______           , _______              , _______  , _______        , _______  , _______        , _______  , _______ ,
-    _______  , _______  , _______           , _______       , _______     , _______                  , _______           , _______              , _______  , _______        , _______  , _______        , _______  , _______
+    _______  , KC_F11   , KC_F12            , _EMPTY_       , _EMPTY_     , _EMPTY_                                                             , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_ ,
+    _______  , _EMPTY_  , _EMPTY_           , _EMPTY_       , _EMPTY_     , _EMPTY_                                                             , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_        , _EMPTY_  , _______ ,
+    _______  , _EMPTY_  , KC_BTN2           , KC_BTN3       , KC_BTN1     , _EMPTY_                  , _EMPTY_           , _EMPTY_              , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_        , _EMPTY_  , _______ ,
+    _______  , _______  , _______           , _EMPTY_       , _______     , _EMPTY_                  , _EMPTY_           , _EMPTY_              , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_        , _______  , _______
   ),
 
   [L_KEYBALL] = LAYOUT_universal(
-    RGB_TOG  , AML_TO   , AML_I50           , AML_D50        , _______     , _______                                                            , RGB_M_P  , RGB_M_B        , RGB_M_R  , RGB_M_SW       , RGB_M_SN , RGB_M_K ,
-    RGB_MOD  , RGB_HUI  , RGB_SAI           , RGB_VAI        , _______     , _______                                                            , RGB_M_X  , RGB_M_G        , RGB_M_T  , RGB_M_TW       , _______  , _______ ,
-    RGB_RMOD , RGB_HUD  , RGB_SAD           , RGB_VAD        , _______     , _______                                                            , CPI_D1K  , CPI_D100       , CPI_I100 , CPI_I1K        , _______  , _______ ,
-    _______  , _______  , SCRL_DVD          , SCRL_DVI       , SCRL_MO     , SCRL_TO                 , _______           , _______              , _______  , _______        , _______  , _______        , KBC_SAVE , KBC_RST ,
-    _______  , _______  , _______           , _______        , _______     , _______                 , _______           , _______              , _______  , _______        , _______  , _______        , EE_CLR   , QK_BOOT
+    RGB_TOG  , RGB_MOD  , _EMPTY_           , RGB_HUI        , RGB_SAI     , RGB_VAI                                                            , SCRL_DVD , SCRL_DVI        , _EMPTY_ , _EMPTY_        , RGB_MOD  , RGB_TOG ,
+    _EMPTY_  , RGB_RMOD , _EMPTY_           , RGB_HUD        , RGB_SAD     , RGB_VAD                                                            , SCRL_MO , SCRL_TO          , AML_TO  , _EMPTY_        , RGB_RMOD , _EMPTY_ ,
+    _EMPTY_  , _EMPTY_  , _EMPTY_           , _EMPTY_        , _EMPTY_     , _EMPTY_                                                            , CPI_I100  , CPI_I1K        , AML_I50 , _EMPTY_        , _EMPTY_  , _EMPTY_ ,
+    _EMPTY_  , _EMPTY_  , _EMPTY_           , _EMPTY_        , _EMPTY_     , _EMPTY_                 , _EMPTY_           , _EMPTY_              , CPI_D1K  , CPI_D100        , AML_D50 , _EMPTY_        , KBC_SAVE , KBC_RST ,
+    _EMPTY_  , _EMPTY_  , _EMPTY_           , _EMPTY_        , _EMPTY_     , _EMPTY_                 , _EMPTY_           , _EMPTY_              , _EMPTY_  , _EMPTY_         , _EMPTY_ , _EMPTY_        , EE_CLR   , QK_BOOT
   )
 
 };
