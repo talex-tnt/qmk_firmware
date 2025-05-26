@@ -30,12 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // kc = 8-bit keycode  (0x00 - 0xFF)
 
 // Macro to check if a keycode is a user-defined custom keycode (QK_USER_0 range)
+#define SAFE_RANGE_CODE QK_USER_0
 #define IS_CUSTOM_MOD(keycode) ( \
-	((keycode) & 0xF000) == (QK_USER_0 & 0xF000) && \
+	((keycode) & 0xF000) == (SAFE_RANGE_CODE & 0xF000) && \
 	((((keycode) >> 8) & 0x0F) == (MOD_LGUI & 0x0F) || ((keycode >> 8) & 0x0F) == (MOD_LCTL & 0x0F)) \
 )
-#define MOD_GUI(kc)  ((QK_USER_0 & 0xF000) | ((MOD_LGUI & 0x000F) << 8) | (kc & 0x00FF))
-#define MOD_CTRL(kc) ((QK_USER_0 & 0xF000) | ((MOD_LCTL & 0x000F) << 8) | (kc & 0x00FF))
+#define MOD_GUI(kc)  ((SAFE_RANGE_CODE & 0xF000) | ((MOD_LGUI & 0x000F) << 8) | (kc & 0x00FF))
+#define MOD_CTRL(kc) ((SAFE_RANGE_CODE & 0xF000) | ((MOD_LCTL & 0x000F) << 8) | (kc & 0x00FF))
 
 // enum custom_keycodes {
 //     // Custom modifier keycodes
@@ -176,7 +177,7 @@ bool handle_alt_gui_tab(uint16_t keycode, keyrecord_t *record) {
 		uint8_t mod = (keycode >> 8) & 0x000F;
 		uint8_t base_key = keycode & 0x00FF;
 
-        // uprintf("keycode = 0x%04X\n", keycode);
+        uprintf("keycode = 0x%04X\n", keycode);
         // uprintf("Pressed mod = 0x%02X base = 0x%02X\n", mod, base_key);
 
         // uprintf("MOD_GUI(KC_TAB) = 0x%04X\n", MOD_GUI(KC_TAB));
