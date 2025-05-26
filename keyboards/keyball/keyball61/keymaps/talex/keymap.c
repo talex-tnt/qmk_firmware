@@ -23,13 +23,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PERMISSIVE_HOLD
 #define TAPPING_FORCE_HOLD
 
+// Assuming:
+// QK_USER_0 = 0x8000  (upper 1 bit set) // we add these bits to all our custom modifier keycodes
+// MOD_LGUI = 0x08     (4-bit value)
+// MOD_LCTL = 0x04     (4-bit value)
+// kc = 8-bit keycode  (0x00 - 0xFF)
 
+// Macro to check if a keycode is a user-defined custom keycode (QK_USER_0 range)
+#define IS_CUSTOM_MOD(keycode) ( \
+	((keycode) & 0xF000) == (QK_USER_0 & 0xF000) && \
+	((((keycode) >> 8) & 0x0F) == (MOD_LGUI & 0x0F) || ((keycode >> 8) & 0x0F) == (MOD_LCTL & 0x0F)) \
+)
+#define MOD_GUI(kc)  ((QK_USER_0 & 0xF000) | ((MOD_LGUI & 0x000F) << 8) | (kc & 0x00FF))
+#define MOD_CTRL(kc) ((QK_USER_0 & 0xF000) | ((MOD_LCTL & 0x000F) << 8) | (kc & 0x00FF))
 
-enum custom_keycodes {
-	GUI_TAB = QK_KB_16,
-    CTRL_TAB = QK_KB_17,
-	// other custom keycodes...
-};
+// enum custom_keycodes {
+//     // Custom modifier keycodes
+// 	// other custom keycodes...
+// };
 
 enum {
     // os specific layouts
@@ -57,8 +68,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [L_MAC_MOD] = LAYOUT_universal(
     KC_GRAVE , _EMPTY_  , _EMPTY_           , _EMPTY_       , _EMPTY_     , _EMPTY_                                                             , _EMPTY_  , _EMPTY_        , _EMPTY_  , KC_MINUS       , KC_EQUAL , KC_DEL  ,
-    _______  , _EMPTY_  , _EMPTY_           , CTRL_TAB      , _EMPTY_     , _EMPTY_                                                             , KC_PGUP  , KC_HOME        , KC_UP    , KC_END         , KC_LBRC  , KC_RBRC ,
-    _______  , KC_CAPS  , G(S(KC_QUOT))     , GUI_TAB       , G(KC_QUOT)  , _EMPTY_                                                             , KC_PGDN  , KC_LEFT        , KC_DOWN  , KC_RGHT        , KC_QUOT  , KC_ENT  ,
+    _______  , MOD_GUI(KC_Q)  , _EMPTY_     , MOD_CTRL(KC_TAB)      , _EMPTY_     , _EMPTY_                                                             , KC_PGUP  , KC_HOME        , KC_UP    , KC_END         , KC_LBRC  , KC_RBRC ,
+    _______  , KC_CAPS  , G(S(KC_QUOT))     , MOD_GUI(KC_TAB)       , G(KC_QUOT)  , _EMPTY_                                                             , KC_PGDN  , KC_LEFT        , KC_DOWN  , KC_RGHT        , KC_QUOT  , KC_ENT  ,
     _______  , _EMPTY_  , KC_BTN2           , KC_BTN3       , KC_BTN1     , _EMPTY_                  , _EMPTY_          , _EMPTY_               , _EMPTY_  , S(C(KC_LEFT))  , _EMPTY_  , S(C(KC_RGHT))  , KC_BSPC  , KC_DEL  ,
     _______  , _______  , _______           , _EMPTY_       , _EMPTY_     , _______                  , _EMPTY_          , _EMPTY_               , _EMPTY_  , _EMPTY_        , _EMPTY_  , _EMPTY_        , _______  , _______
   ),
@@ -155,40 +166,70 @@ bool swap_ctrl_gui(uint16_t keycode, keyrecord_t *record) {
 }
 
 
-bool gui_tab_active = false;
-bool ctrl_tab_active = false;
+
+// Track active state for cleanup
+bool mod_key_active = false;
+uint8_t mod_key_mod = 0;
+
 bool handle_alt_gui_tab(uint16_t keycode, keyrecord_t *record) {
-	switch (keycode) {
-		case GUI_TAB:
-			if (record->event.pressed) {
-				register_mods(MOD_BIT(KC_LGUI));
-				register_code(KC_TAB);
-                gui_tab_active = true;
-			} else {
-				unregister_code(KC_TAB);
-			}
-			return false; // skip default processing
-        case CTRL_TAB:
-			if (record->event.pressed) {
-				register_mods(MOD_BIT(KC_LCTL));
-				register_code(KC_TAB);
-                ctrl_tab_active = true;
-			} else {
-				unregister_code(KC_TAB);
-			}
-			return false;
+	if (IS_CUSTOM_MOD(keycode)) {
+		uint8_t mod = (keycode >> 8) & 0x000F;
+		uint8_t base_key = keycode & 0x00FF;
+
+        // uprintf("keycode = 0x%04X\n", keycode);
+        // uprintf("Pressed mod = 0x%02X base = 0x%02X\n", mod, base_key);
+
+        // uprintf("MOD_GUI(KC_TAB) = 0x%04X\n", MOD_GUI(KC_TAB));
+        // uprintf("MOD_GUI mod = 0x%02X base = 0x%02X\n", (MOD_GUI(KC_TAB) >> 8) & 0x000F, MOD_GUI(KC_TAB) & 0x00FF);
+
+        // uprintf("MOD_LGUI = 0x%08X\n", MOD_LGUI);
+        // uprintf("MOD_BIT(KC_LGUI) = 0x%08X\n", MOD_BIT(KC_LGUI));
+        // uprintf("mod = 0x%08X\n", mod);
+        // uprintf("MOD_BIT(mod) = 0x%08X\n", MOD_BIT(mod));
+
+		if (record->event.pressed) {
+			register_mods(mod);
+			register_code(base_key);
+			mod_key_active = true;
+			mod_key_mod = mod;
+		} else {
+			unregister_code(base_key); // modifier will be unregistered on layer change
+		}
+		return false;
 	}
+
 	return true;
 }
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+	static layer_state_t previous_layer_state;
 
-uint16_t prev_cpi_value = KEYBALL_CPI_DEFAULT;
+	keyball_set_scroll_mode(get_highest_layer(state) == L_MAC_MOD); // Auto enable scroll mode when the highest layer is MAC_MOD_LAYER
+
+	if (mod_key_active) { // Cleanup if we changed layer
+		for (uint8_t i = 0; i < 32; i++) {
+			bool was_active = (previous_layer_state & (1UL << i)) != 0;
+			bool is_active = (state & (1UL << i)) != 0;
+
+			if (was_active && !is_active) {
+				unregister_mods(mod_key_mod);
+				mod_key_active = false;
+				break;
+			}
+		}
+	}
+	previous_layer_state = state;
+	return state;
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+
+    static uint16_t prev_cpi_value = KEYBALL_CPI_DEFAULT;
+
     if(!swap_alt_gui(keycode, record)) {
         return false;
     }
-    if(layer_state_is(L_MAC_MOD) && !swap_ctrl_gui(keycode, record)) {
+    if(!swap_ctrl_gui(keycode, record)) {
         return false;
     }
     if(!handle_alt_gui_tab(keycode, record)) {
@@ -205,33 +246,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
     }
     return true;
-}
-
-
-
-layer_state_t layer_state_set_user(layer_state_t state) {
-
-    keyball_set_scroll_mode(get_highest_layer(state) == L_MAC_MOD);  // Auto enable scroll mode when the highest layer is MAC_MOD_LAYER
-
-    static layer_state_t previous_layer_state;
-	if (gui_tab_active || ctrl_tab_active) {
-		for (uint8_t i = 0; i < 32; i++) {
-			bool was_active = (previous_layer_state & (1UL << i)) != 0;
-			bool is_active = (state & (1UL << i)) != 0;
-
-			if (was_active && !is_active) {
-				if (gui_tab_active) {
-					unregister_mods(MOD_BIT(KC_LGUI));
-					gui_tab_active = false;
-				}
-				if (ctrl_tab_active) {
-					unregister_mods(MOD_BIT(KC_LCTL));
-					ctrl_tab_active = false;
-				}
-				break;
-			}
-		}
-	}
-	previous_layer_state = state;
-	return state;
 }
