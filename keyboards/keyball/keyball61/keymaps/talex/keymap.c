@@ -23,14 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PERMISSIVE_HOLD
 #define TAPPING_FORCE_HOLD
 
-// Assuming:
-// QK_USER_0 = 0x8000  (upper 1 bit set) // we add these bits to all our custom modifier keycodes
-// MOD_LGUI = 0x08     (4-bit value)
-// MOD_LCTL = 0x04     (4-bit value)
-// kc = 8-bit keycode  (0x00 - 0xFF)
+// actual keycode values are here: quantum/keycodes.h
+// actual modifier values are here: quantum/modifiers.h
 
-// Macro to check if a keycode is a user-defined custom keycode (QK_USER_0 range)
-#define SAFE_RANGE_CODE QK_USER_0
+#define SAFE_RANGE_CODE 0b1000000000000000
 #define IS_CUSTOM_MOD(keycode) ( \
 	((keycode) & 0xF000) == (SAFE_RANGE_CODE & 0xF000) && \
 	((((keycode) >> 8) & 0x0F) == (MOD_LGUI & 0x0F) || ((keycode >> 8) & 0x0F) == (MOD_LCTL & 0x0F)) \
